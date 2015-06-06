@@ -25,11 +25,12 @@ import sys
 
 def numRabbits(months, lifespan=float('inf')):
   dead = 0
+  months = range(1, months)
   mature, young, total = [0], [1], [1]
-  for i in range(1, months):
-    dead = 0 if i <= lifespan-1 else young[i-lifespan]
-    mature.append(mature[i-1] + young[i-1] - dead)
-    young.append(mature[i-1])
+  for month in months:
+    dead = 0 if month <= lifespan-1 else young[month-lifespan]
+    mature.append(mature[month-1] + young[month-1] - dead)
+    young.append(mature[month-1])
   total = mature[-1] + young[-1]
   return total
 
