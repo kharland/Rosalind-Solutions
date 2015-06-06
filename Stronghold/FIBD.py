@@ -7,8 +7,8 @@ import sys
 # dead is the number of rabbit pairs that will die in the current month.
 # lifespan is the number of months each rabbit will live.
 #
-# Each month, all rabbits that are older than lifespan months will die and stop 
-# producing (d == young[i-L]).  
+# Each month, all rabbits that are older than lifespan months will die and stop
+# producing. So dead = young[i-L]).  
 # 
 # Without death, the number of mature rabbits would be the number of mature
 # rabbits in the previous month + the number of young rabbits in the previous
