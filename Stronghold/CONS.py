@@ -2,66 +2,39 @@
 
 import sys
 
-"""CMD line args & helpers"""
-if len(sys.argv) < 2:
-	print "\nCONS [inf Input-file-name]\n"
-	sys.exit()
+sequences, sequencesT = [], []
+concensus = ""
+counts = []
+nucleotides = ('A', 'C', 'G', 'T')
 
-def mfn(a, c, g, t):
-	"""MostFrequentNucleotide"""
-	n = max(a, c, g, t)
-	if n is a: return "A";
-	if n is c: return "C";
-	if n is g: return "G";
-	if n is t: return "T";
-
-"""Constants"""
-A, C, G, T = 0, 1, 2, 3
-HEADER, SEQUENCE = 0, 1
-
-
-"""Load each sequence"""
-sequences = []
-with open(sys.argv[1], "r") as FASTAfile:
+# Read all sequences into a matrix where the index i,j contains the jth
+# character of the ith sequence and transpose that matrix.
+with open(sys.argv[1]) as FASTAfile:
+	sequence = ""
 	for line in FASTAfile:
-		if line[0] == ">":
-			id = line[1:].rstrip()
-			sequences.append([id,""])
-		elif line[0] in ['A','G','C','T']:
-			sequences[-1][SEQUENCE] += line.rstrip()
+		if line[0] is ">":
+			if len(sequence) > 0:
+				sequences.append([c for c in sequence])
+				sequence = ""
+		else:
+			sequence += line.rstrip()
+	sequences.append([c for c in sequence])
+sequencesT = map(list, zip(*sequences))
 
+# Compute the profile matrix for this group of sequences.
+for nucleotide in nucleotides:
+	counts.append([seq.count(nucleotide) for seq in sequencesT])
 
-"""Create profile matrix"""
-seqLen = len(sequences[0][SEQUENCE])
-counts = [[0 for i in range(0, seqLen)] for i in range(0, 4)] 
+# Build the consensus string from the profile matrix
+for j in range(0, len(counts[0])):
+	column = [counts[i][j] for i in range(0, len(nucleotides))]
+	idx = max(column)
+	if column.index(idx) is 0: concensus += 'A';
+	elif column.index(idx) is 1: concensus += 'C';
+	elif column.index(idx) is 2: concensus += 'G';
+	elif column.index(idx) is 3: concensus += 'T';
 
-for i in range(0, seqLen):
-	for (header,sequence) in sequences:
-		if   sequence[i] == 'A': counts[A][i] += 1;
-		elif sequence[i] == 'C': counts[C][i] += 1;
-		elif sequence[i] == 'G': counts[G][i] += 1;
-		elif sequence[i] == 'T': counts[T][i] += 1;
-
-
-"""Print consensus string and profile matrix"""
-print "".join([mfn(counts[A][i], counts[C][i], counts[G][i], counts[T][i])
-               for i in range(0, seqLen)])
-
-print "A:",
-for c in counts[A]:
-	print c,
-print ""
-
-print "C:",
-for c in counts[C]:
-	print c,
-print ""
-
-print "G:",
-for c in counts[G]:
-	print c,
-print ""
-
-print "T:",
-for c in counts[T]:
-	print c,
+print concensus
+for i in range(0, len(nucleotides)):
+	print ("%s:" % nucleotides[i]),
+	print ' '.join(map(str,counts[i]))
