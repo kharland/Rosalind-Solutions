@@ -2,11 +2,7 @@
 
 import sys
 
-if len(sys.argv) < 2:
-	print "\nPROT [input-file]\n"
-	sys.exit()
-
-translationTable = {
+RNACodonTable = {
 	"UUU": "F",    "CUU": "L", "AUU": "I", "GUU": "V",
 	"UUC": "F",    "CUC": "L", "AUC": "I", "GUC": "V",
 	"UUA": "L",    "CUA": "L", "AUA": "I", "GUA": "V",
@@ -25,25 +21,17 @@ translationTable = {
 	"UGG": "W",    "CGG": "R", "AGG": "R", "GGG": "G"
 }
 
-def DNARNA2GenString(seq):
-	try:
-		return translationTable[seq]
-	except KeyError:
-		return seq
+encoding = ""
+pos = 0
 
-
-# We assume the input file only holds one DNA or RNA sequence
-genString = ""
-
-with open(sys.argv[1], "r") as inf:
-	for line in inf:
-		DNARNAseq = line
-		while len(DNARNAseq) > 0:
-			chunk = DNARNA2GenString(DNARNAseq[0:3])
-			if chunk != "Stop":
-				genString += chunk
-			else:
-				break
-			DNARNAseq = DNARNAseq[3:]
-
-print genString
+with open(sys.argv[1]) as inf:
+	RNA = inf.readline().rstrip()	
+	while pos + 3 <= len(RNA):
+		codon = RNA[pos:pos+3]
+		aminoAcid = RNACodonTable[codon]
+		if aminoAcid != "Stop":
+			encoding += aminoAcid
+			pos += 3
+		else: break;
+		
+print encoding
