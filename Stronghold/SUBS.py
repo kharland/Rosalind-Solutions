@@ -2,17 +2,11 @@
 
 import sys
 
-if len(sys.argv) < 3:
-	print "\nSUBS [needle] [haystack]\n"
-	sys.exit()
-
-needle, haystack = str(sys.argv[1]), str(sys.argv[2])
-target = 0
-
-while target < len(haystack):
-	target = haystack.find(needle, target)
-	if target < 0:
-		break
-	else:
-		target += 1
-		print target,
+with open(sys.argv[1]) as inf:
+  haystack = inf.readline().rstrip()
+  needle = inf.readline().rstrip()
+  pos = 0
+  while pos < len(haystack):
+    pos = haystack.find(needle, pos) + 1
+    if pos == 0: break;
+    else: print pos,;
