@@ -29,10 +29,7 @@ for nucleotide in nucleotides:
 for j in range(0, len(counts[0])):
 	column = [counts[i][j] for i in range(0, len(nucleotides))]
 	idx = max(column)
-	if column.index(idx) is 0: concensus += 'A';
-	elif column.index(idx) is 1: concensus += 'C';
-	elif column.index(idx) is 2: concensus += 'G';
-	elif column.index(idx) is 3: concensus += 'T';
+	consensus += nucleotides[column.index(idx)]
 
 print concensus
 for i in range(0, len(nucleotides)):
